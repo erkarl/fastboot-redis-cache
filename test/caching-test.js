@@ -86,6 +86,23 @@ describe('caching tests', function() {
 
       return cache.put('/', body, mockResponse).then(() => {
         expect(mockRedis['/_mmmmmm']).to.equal(body);
+        expect(mockRedis['key_index_/']).to.equal('/_mmmmmm');
+      });
+    });
+
+    it('can build a custom cache key from the documentId prefix', function() {
+      let body = '<body>Hola</body>';
+      let mockResponse = {
+        req: {
+          cookies: {
+            chocolateChip: 'mmmmmm'
+          }
+        }
+      };
+
+      return cache.put('/123-abc', body, mockResponse).then(() => {
+        expect(mockRedis['/123-abc_mmmmmm']).to.equal(body);
+        expect(mockRedis.key_index_123).to.equal('/123-abc_mmmmmm');
       });
     });
 
